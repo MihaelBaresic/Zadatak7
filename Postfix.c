@@ -1,5 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
-//2+3*(2+3*(2-1)+(4*2)-6)+2
+//7+3*(2+3*(2-1)+(4*2)-6)+2
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,10 +13,10 @@ typedef struct _Stack {
 }Stack;
 
 void Push(Position, Position);
-Position create(char);
+Position createEl(int);
 void printList(Position);
 int Pop(Position);
-int Result(Position);
+
 
 int main() {
 	Stack head;
@@ -26,59 +26,70 @@ int main() {
 	File = fopen("Text.txt", "r");
 	if (!File)
 		printf("Wrong allocation!");
-	
-	char line[1024];
-	fgets(line, 1024, File);
-	
-	int number;
 
-	int i = 0;
-	do {
-		if(line[i]!=' ')
-			switch (line[i]) {
-			case('+'):
-				K = create(line[i]);
-				Push(&head, K);
-				break;
-			case('-'):
-				K = create(line[i]);
-				Push(&head, K);
-				break;
-			case('*'):
-				K = create(line[i]);
-				Push(&head, K);
-				break;
-			case('('):
-				K = create(line[i]);
-				Push(&head, K);
-				break;
-			case(')'):
-				K = create(line[i]);
-				Push(&head, K);
-				break;
-			default:
-				number = (int)(line[i]);
-				K = create(number);
-				Push(&head, K);
-				break;
-			}
-		i++;
-	} while (line[i] != '\0');
+	char *buffer = NULL;
+	buffer = (char*)malloc(1024);
+	fgets(buffer, 1024, File);
 
-	
-
-	int r;
-	r = Result(&head);
-	printf("\n\tThe result of postfix is: %d", r);
+	int count = 0, value = 0, number = 0;
 	int n;
-	
+	n = strlen(buffer);
+	int result = 0,res=0;
+	char operation;
+	int el1 = 0, el2 = 0;
 
+
+	while (result==n) {
+		
+		if((value = sscanf(buffer, "%d%n", &number, &count)==1))
+		{
+			K = createEl(number);
+			Push(&head, K);
+		}
+		else {
+			value = sscanf(buffer, "%c%n", &operation, &count);
+				if (value == 1) {
+					if (operation == '+') {
+						el1 = Pop(&head);
+						el2 = Pop(&head);
+						res = el1 + el2;
+						K = createEl(res);
+						Push(&head, K);
+					}
+					else if (operation == '-') {
+						el1 = Pop(&head);
+						el2 = Pop(&head);
+						res = el2 - el1;
+						K = createEl(res);
+						Push(&head, K);
+					}
+					else if (operation == '*') {
+						res = 1;
+						el1 = Pop(&head);
+						el2 = Pop(&head);
+						res = el1 * el2;
+						K = createEl(res);
+						Push(&head, K);
+					}
+					else {
+						buffer += count;
+						result += count;
+					}
+				}
+		}
+		buffer += count;
+		result += count;
+	}
+
+
+	printf("%d", res);
 	printList(&head);
+	system("pause");
 	return 0;
 }
 
 
-Position create(int El) {
+Position createEl(int El) {
 	Position Q;
 	Q = (Position)malloc(sizeof(Stack));
 	if (!Q)
@@ -88,31 +99,11 @@ Position create(int El) {
 	return Q;
 }
 
-int Result(Position head) {
-	
-	head = head->next;
-	do{
-		
-		
-		
-		
-		
-		
-		
-		head = head->next;
-	} while (head != NULL);
-
-
-
-	return 0;
-}
-
-
 void Push(Position head, Position K) {
-	
+
 	while (head->next != NULL)
 		head = head->next;
-	
+
 	K->next = head->next;
 	head->next = K;
 }
@@ -127,8 +118,6 @@ int Pop(Position head) {
 	head->next = NULL;
 	return temp->El;
 	free(temp);
-	
-	
 }
 
 
@@ -138,7 +127,7 @@ void printList(Position head) {
 
 	head = head->next;
 	while (head != NULL) {
-		printf("\t\n%d",head->El);
+		printf("\t\n%d", head->El);
 		head = head->next;
 	}
 
