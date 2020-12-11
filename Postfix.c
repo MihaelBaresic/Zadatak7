@@ -27,64 +27,60 @@ int main() {
 	if (!File)
 		printf("Wrong allocation!");
 
-	char *buffer = NULL;
+	char* buffer = NULL;
 	buffer = (char*)malloc(1024);
 	fgets(buffer, 1024, File);
 
-	int count = 0, value = 0, number = 0;
+	int count = 0, value_c = 0, value_i = 0, number = 0;
 	int n;
 	n = strlen(buffer);
-	int result = 0,res=0;
+	int result = 0, res = 0;
 	char operation;
 	int el1 = 0, el2 = 0;
 
 
-	while (result==n) {
-		
-		if((value = sscanf(buffer, "%d%n", &number, &count)==1))
+	while (result <= n) {
+		value_c = 0;
+		value_i = 0;
+		value_i = sscanf(buffer,"%d%n", &number, &count);
+		if(value_i==1)
 		{
 			K = createEl(number);
 			Push(&head, K);
 		}
 		else {
-			value = sscanf(buffer, "%c%n", &operation, &count);
-				if (value == 1) {
-					if (operation == '+') {
-						el1 = Pop(&head);
-						el2 = Pop(&head);
-						res = el1 + el2;
-						K = createEl(res);
-						Push(&head, K);
-					}
-					else if (operation == '-') {
-						el1 = Pop(&head);
-						el2 = Pop(&head);
-						res = el2 - el1;
-						K = createEl(res);
-						Push(&head, K);
-					}
-					else if (operation == '*') {
-						res = 1;
-						el1 = Pop(&head);
-						el2 = Pop(&head);
-						res = el1 * el2;
-						K = createEl(res);
-						Push(&head, K);
-					}
-					else {
-						buffer += count;
-						result += count;
-					}
+			value_c = sscanf(buffer, "%c%n", &operation, &count);
+			if (value_c == 1) {
+				if (operation == '+') {
+					el1 = Pop(&head);
+					el2 = Pop(&head);
+					res = el1 + el2;
+					K = createEl(res);
+					Push(&head, K);
 				}
+				else if (operation == '-') {
+					el1 = Pop(&head);
+					el2 = Pop(&head);
+					res = el2 - el1;
+					K = createEl(res);
+					Push(&head, K);
+				}
+				else if(operation == '*') {
+					el1 = Pop(&head);
+					el2 = Pop(&head);
+					res = el1 * el2;
+					K = createEl(res);
+					Push(&head, K);
+				}
+			}
 		}
 		buffer += count;
 		result += count;
 	}
 
-
-	printf("%d", res);
+	res = Pop(&head);
+	printf("Result of postfix is: %d", res);
 	printList(&head);
-	system("pause");
 	return 0;
 }
 
